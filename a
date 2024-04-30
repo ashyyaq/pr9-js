@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игры</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #games-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .game-item {
+            border: 1px solid #ccc;
+            margin: 5px;
+            padding: 10px;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .edit-game-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f9f9f9;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Игры</h1>
+    <ul id="games-list"></ul>
+    <button id="add-game-btn">Добавить игру</button>
+
+    <div id="edit-game-modal" class="edit-game-modal">
+        <h2>Редактировать игру</h2>
+        <input type="text" id="edit-name" placeholder="Название">
+        <input type="text" id="edit-genre" placeholder="Жанр">
+        <input type="text" id="edit-year" placeholder="Год">
+        <button id="save-edit-btn">Сохранить</button>
+        <button id="cancel-edit-btn">Отмена</button>
+    </div>
+
+    <script>
+        const games = [];
+
+        function displayGames() {
+            const gamesList = document.getElementById("games-list");
+            gamesList.innerHTML = "";
+            games.forEach((game, index) => {
+                const li = document.createElement("li");
+                li.className = "game-item";
+                li.textContent = `Название: ${game.name}, Жанр: ${game.genre}, Год: ${game.year}`;
+                
+                const editButton = document.createElement("button");
+                editButton.textContent = "Изменить";
+                editButton.addEventListener("click", () => openEditModal(index));
+                
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Удалить";
+                deleteButton.addEventListener("click", () => deleteGame(index));
+                
+                li.appendChild(editButton);
+                li.appendChild(deleteButton);
+                
+                gamesList.appendChild(li);
+            });
+        }
+
+        function addGame() {
+            const name = prompt("Введите название игры:");
+            const genre = prompt("Введите жанр игры:");
+            const year = prompt("Введите год выпуска игры:");
+
+            if (name && genre && year) {
+                const newGame = { name, genre, year };
+                games.push(newGame);
+                displayGames();
+            } else {
+                alert("Пожалуйста, заполните все поля.");
+            }
+        }
+
+        function openEditModal(index) {
+            const game = games[index];
+            document.getElementById("edit-name").value = game.name;
+            document.getElementById("edit-genre").value = game.genre;
+            document.getElementById("edit-year").value = game.year;
+
+            const modal = document.getElementById("edit-game-modal");
+            modal.style.display = "block";
+
+            document.getElementById("save-edit-btn").addEventListener("click", () => saveEdit(index));
+            document.getElementById("cancel-edit-btn").addEventListener("click", () => modal.style.display = "none");
+        }
+
+        function saveEdit(index) {
+            const name = document.getElementById("edit-name").value;
+            const genre = document.getElementById("edit-genre").value;
+            const year = document.getElementById("edit-year").value;
+
+            if (name && genre && year) {
+                games[index] = { name, genre, year };
+                displayGames();
+                document.getElementById("edit-game-modal").style.display = "none";
+            } else {
+                alert("Пожалуйста, заполните все поля.");
+            }
+        }
+
+        function deleteGame(index) {
+            if (confirm("Вы уверены, что хотите удалить эту игру?")) {
+                games.splice(index, 1);
+                displayGames();
+            }
+        }
+
+        document.getElementById("add-game-btn").addEventListener("click", addGame);
+
+        displayGames();
+    </script>
+</body>
+
+</html>
